@@ -28,6 +28,10 @@
                 <i class="el-icon-edit-outline operation-icon" />
                 <span>{{ $t(`common.edit`) }}</span>
               </emqx-dropdown-item>
+              <emqx-dropdown-item v-if="isOPCUA(data.plugin)" class="operation-item-wrap" command="pointDiscovery">
+                <i class="el-icon-search operation-icon" />
+                <span>{{ $t(`config.pointDiscovery`) }}</span>
+              </emqx-dropdown-item>
               <emqx-dropdown-item class="operation-item-wrap" command="debugLogLevel">
                 <img class="operation-image" src="~@/assets/images/debug-log-icon.png" alt="debug-log" />
                 <span>{{ $t(`config.updateDebugLogLevel`) }}</span>
@@ -86,9 +90,10 @@ import { computed, defineEmits, defineProps } from 'vue'
 import { useDriverStatus, useNodeStartStopStatus, dataStatistics, useDriverName } from '@/composables/config/useDriver'
 import useSouthDriver from '@/composables/config/useSouthDriver'
 import type { DriverItemInList } from '@/types/config'
-import { NodeCatogery } from '@/types/enums'
+import { NodeCatogery, PluginType } from '@/types/enums'
 import AComWithDesc from '@/components/AComWithDesc.vue'
 import DataStatisticsDrawer from '../../components/dataStatisticsDrawer.vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   data: {
@@ -99,11 +104,15 @@ const props = defineProps({
 
 const emit = defineEmits(['toggleStatus', 'clickOperation'])
 
+const router = useRouter()
 const { goGroupPage, goNodeConfig } = useSouthDriver(false)
 const { statusIcon, statusText, connectionStatusText } = useDriverStatus(props)
 
 const { countNodeStartStopStatus } = useNodeStartStopStatus()
 const { isMonitorNode } = useDriverName()
+
+// Check if plugin is OPCUA
+const isOPCUA = (pluginName: string) => pluginName === 'OPC UA'
 
 const nodeStartStopStatus = computed({
   get() {
@@ -119,7 +128,23 @@ const { isShowDataStatistics, dataStatisticsVisiable } = dataStatistics()
 
 // more operators
 const handleClickOperator = async (command: string) => {
-  emit('clickOperation', command)
+  if (command === 'pointDiscovery') {
+    goPointDiscovery(props.data)
+  } else {
+    emit('clickOperation', command)
+  }
+}
+
+// Navigate to point discovery page
+const goPointDiscovery = (data: DriverItemInList) => {
+  const { name, plugin } = data
+  router.push({
+    name: 'PointDiscovery',
+    params: {
+      node: name,
+      plugin,
+    },
+  })
 }
 </script>
 

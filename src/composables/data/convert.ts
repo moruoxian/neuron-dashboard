@@ -217,16 +217,21 @@ export const transFloatNumberToHex = (num: number | string, type: TagType.FLOAT 
  */
 export const transNegativeNumberToHex = (
   num: number,
-  type: TagType.UINT8 | TagType.UINT16 | TagType.UINT32 | TagType.UINT64,
+  type: TagType.UINT8 | TagType.UINT16 | TagType.UINT32 | TagType.UINT64 | TagType.PTR | TagType.TIME | TagType.DATA_AND_TIME,
 ): number | string => {
+  // 对于PTR, TIME和DATA_AND_TIME类型，使用UINT32的长度
+  const actualType = type === TagType.PTR || type === TagType.TIME || type === TagType.DATA_AND_TIME 
+    ? TagType.UINT32 
+    : type;
+    
   const decimalNumWithoutSignBitStr: string = (-num).toString(2)
-  const decimalNumFullWithoutSignBitStr = fillString(decimalNumWithoutSignBitStr, '0', uintLengthMap[type] - 1, true)
+  const decimalNumFullWithoutSignBitStr = fillString(decimalNumWithoutSignBitStr, '0', uintLengthMap[actualType] - 1, true)
   const decimalNumComplementStr = getComplement(decimalNumFullWithoutSignBitStr)
   if (!decimalNumComplementStr) {
     return num
   }
   const decimalNumComplementStrAdd1 = addBinary(decimalNumComplementStr, '1')
-  if (decimalNumComplementStrAdd1.length > uintLengthMap[type] - 1) {
+  if (decimalNumComplementStrAdd1.length > uintLengthMap[actualType] - 1) {
     return num
   }
   return transBinaryStrToHexStr(getSignBit(true) + decimalNumComplementStrAdd1)
@@ -310,10 +315,15 @@ export const transFloatHexToDecimalNum = (hexStr: string, type: TagType.FLOAT | 
  */
 export const transUintHexToDecimalNum = (
   unitHex: string,
-  type: TagType.UINT8 | TagType.UINT16 | TagType.UINT32 | TagType.UINT64,
+  type: TagType.UINT8 | TagType.UINT16 | TagType.UINT32 | TagType.UINT64 | TagType.PTR | TagType.TIME | TagType.DATA_AND_TIME,
 ) => {
+  // 对于PTR, TIME和DATA_AND_TIME类型，使用UINT32的长度
+  const actualType = type === TagType.PTR || type === TagType.TIME || type === TagType.DATA_AND_TIME 
+    ? TagType.UINT32 
+    : type;
+    
   let hexStr = unitHex
-  const binaryLength = uintLengthMap[type]
+  const binaryLength = uintLengthMap[actualType]
   const hexStrLength = binaryLength / 4
   if (unitHex.length < hexStrLength) {
     hexStr = fillString(hexStr, '0', hexStrLength, true)

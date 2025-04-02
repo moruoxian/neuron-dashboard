@@ -166,19 +166,72 @@ export default (isWriteValue = true) => {
       [TagType.WORD]: checkInt.bind(null, UINT16_RANGE, value),
       [TagType.DWORD]: checkInt.bind(null, UINT32_RANGE, value),
       [TagType.LWORD]: checkInt.bind(null, UINT64_RANGE, value),
+      [TagType.ERROR]: () => Promise.resolve(new Error('ERROR type is not writable')),
+      [TagType.PTR]: checkInt.bind(null, UINT32_RANGE, value),
+      [TagType.TIME]: checkInt.bind(null, UINT32_RANGE, value),
+      [TagType.DATA_AND_TIME]: checkInt.bind(null, UINT32_RANGE, value),
+      [TagType.ARRAY_CHAR]: checkByte.bind(null, value),
+      [TagType.ARRAY_INT8]: checkInt.bind(null, INT8_RANGE, value),
+      [TagType.ARRAY_UINT8]: checkInt.bind(null, UINT8_RANGE, value),
+      [TagType.ARRAY_INT16]: checkInt.bind(null, INT16_RANGE, value),
+      [TagType.ARRAY_UINT16]: checkInt.bind(null, UINT16_RANGE, value),
+      [TagType.ARRAY_INT32]: checkInt.bind(null, INT32_RANGE, value),
+      [TagType.ARRAY_UINT32]: checkInt.bind(null, UINT32_RANGE, value),
+      [TagType.ARRAY_INT64]: checkInt.bind(null, INT64_RANGE, value),
+      [TagType.ARRAY_UINT64]: checkInt.bind(null, UINT64_RANGE, value),
+      [TagType.ARRAY_FLOAT]: checkFloat.bind(null, value),
+      [TagType.ARRAY_DOUBLE]: checkFloat.bind(null, value),
+      [TagType.ARRAY_BOOL]: checkStrNBool.bind(null),
+      [TagType.ARRAY_STRING]: checkStrNBool.bind(null),
+      [TagType.CUSTOM]: checkStrNBool.bind(null),
     }
     return checkMap[type]()
   }
 
   const parseWriteData = (type: TagType, value: string) => {
-    if (type === TagType.STRING || type === TagType.BOOL) {
+    // 处理字符串和布尔类型
+    if (type === TagType.STRING || type === TagType.BOOL || type === TagType.ARRAY_STRING || type === TagType.ARRAY_BOOL) {
       return value
     }
 
-    if (type === TagType.BYTES) {
+    // 处理二进制数据类型
+    if (type === TagType.BYTES || type === TagType.ARRAY_CHAR || type === TagType.ARRAY_UINT8 || type === TagType.ARRAY_INT8) {
       return value ? JSON.parse(value) : value
     }
 
+    // 处理JSON/CUSTOM类型
+    if (type === TagType.CUSTOM) {
+      try {
+        return JSON.parse(value)
+      } catch (e) {
+        return value
+      }
+    }
+
+    // 处理ERROR类型 - 返回0值
+    if (type === TagType.ERROR) {
+      return 0
+    }
+
+    // 处理其他数组类型
+    if (
+      type === TagType.ARRAY_INT16 || 
+      type === TagType.ARRAY_UINT16 || 
+      type === TagType.ARRAY_INT32 || 
+      type === TagType.ARRAY_UINT32 || 
+      type === TagType.ARRAY_INT64 || 
+      type === TagType.ARRAY_UINT64 || 
+      type === TagType.ARRAY_FLOAT || 
+      type === TagType.ARRAY_DOUBLE
+    ) {
+      try {
+        return value ? JSON.parse(value) : []
+      } catch (e) {
+        return []
+      }
+    }
+
+    // 默认处理数值类型
     return Number(value)
   }
   const checkWriteData = async (type: number, value: string): Promise<boolean | Error> => {
@@ -194,6 +247,28 @@ export default (isWriteValue = true) => {
   }
   const transToDecimal = async (tagData: TagDataInTable) => {
     const { value, type } = tagData
+    
+    // 处理数组类型、ERROR和CUSTOM类型
+    if (
+      type === TagType.ERROR || 
+      type === TagType.CUSTOM || 
+      type === TagType.ARRAY_INT8 || 
+      type === TagType.ARRAY_UINT8 || 
+      type === TagType.ARRAY_INT16 || 
+      type === TagType.ARRAY_UINT16 || 
+      type === TagType.ARRAY_INT32 || 
+      type === TagType.ARRAY_UINT32 || 
+      type === TagType.ARRAY_INT64 || 
+      type === TagType.ARRAY_UINT64 || 
+      type === TagType.ARRAY_FLOAT || 
+      type === TagType.ARRAY_DOUBLE || 
+      type === TagType.ARRAY_BOOL || 
+      type === TagType.ARRAY_STRING || 
+      type === TagType.ARRAY_CHAR
+    ) {
+      return value
+    }
+    
     const str =
       value.slice(0, HEXADECIMAL_PREFIX.length).toLowerCase() === HEXADECIMAL_PREFIX
         ? value
@@ -204,7 +279,15 @@ export default (isWriteValue = true) => {
       if (type === TagType.FLOAT || type === TagType.DOUBLE) {
         return transFloatHexToDecimalNum(hexStr, type)
       }
-      if (type === TagType.UINT8 || type === TagType.UINT16 || type === TagType.UINT32 || type === TagType.UINT64) {
+      if (
+        type === TagType.UINT8 || 
+        type === TagType.UINT16 || 
+        type === TagType.UINT32 || 
+        type === TagType.UINT64 || 
+        type === TagType.PTR || 
+        type === TagType.TIME || 
+        type === TagType.DATA_AND_TIME
+      ) {
         return transUintHexToDecimalNum(hexStr, type)
       }
       return transIntHexToDecimalNum(hexStr)
@@ -214,6 +297,28 @@ export default (isWriteValue = true) => {
   }
   const transToHexadecimal = async (tagData: TagDataInTable) => {
     const { value, type } = tagData
+    
+    // 处理数组类型、ERROR和CUSTOM类型
+    if (
+      type === TagType.ERROR || 
+      type === TagType.CUSTOM || 
+      type === TagType.ARRAY_INT8 || 
+      type === TagType.ARRAY_UINT8 || 
+      type === TagType.ARRAY_INT16 || 
+      type === TagType.ARRAY_UINT16 || 
+      type === TagType.ARRAY_INT32 || 
+      type === TagType.ARRAY_UINT32 || 
+      type === TagType.ARRAY_INT64 || 
+      type === TagType.ARRAY_UINT64 || 
+      type === TagType.ARRAY_FLOAT || 
+      type === TagType.ARRAY_DOUBLE || 
+      type === TagType.ARRAY_BOOL || 
+      type === TagType.ARRAY_STRING || 
+      type === TagType.ARRAY_CHAR
+    ) {
+      return value
+    }
+    
     try {
       await checkFloat(value.toString())
       if (type === TagType.FLOAT || type === TagType.DOUBLE) {
@@ -221,7 +326,15 @@ export default (isWriteValue = true) => {
       }
       if (
         value < 0 &&
-        (type === TagType.UINT8 || type === TagType.UINT16 || type === TagType.UINT32 || type === TagType.UINT64)
+        (
+          type === TagType.UINT8 || 
+          type === TagType.UINT16 || 
+          type === TagType.UINT32 || 
+          type === TagType.UINT64 || 
+          type === TagType.PTR || 
+          type === TagType.TIME || 
+          type === TagType.DATA_AND_TIME
+        )
       ) {
         return HEXADECIMAL_PREFIX + transNegativeNumberToHex(value, type)
       }

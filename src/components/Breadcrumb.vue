@@ -121,7 +121,26 @@ const onHandleLink = (item: any) => {
     $router.push(redirect)
     return
   }
-  const to_path = fullPath || path
+  
+  // 获取当前路由参数
+  const routeParams = $route.params
+  
+  // 使用当前路由参数替换路径中的占位符
+  let to_path = fullPath || path
+  
+  // 检查路径中是否包含 :node 或 :group 占位符，并替换为当前值
+  if (to_path.includes(':node') && routeParams.node) {
+    to_path = to_path.replace(':node', routeParams.node as string)
+  }
+  
+  if (to_path.includes(':group') && routeParams.group) {
+    to_path = to_path.replace(':group', routeParams.group as string)
+  }
+  
+  if (to_path.includes(':plugin') && routeParams.plugin) {
+    to_path = to_path.replace(':plugin', routeParams.plugin as string)
+  }
+  
   $router.push(to_path)
 }
 </script>

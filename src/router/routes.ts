@@ -60,12 +60,6 @@ const routes: Array<RouteRecordRaw> = [
         meta: { hiddenBreadcrumb: true },
       },
       {
-        path: ':node/:plugin',
-        name: 'NorthDriverGroup',
-        component: () => import('@/views/config/northDriver/Group.vue'),
-        meta: { title: 'config.groupList' },
-      },
-      {
         path: 'config/:node',
         name: 'NorthDriverConfig',
         component: () => import('@/views/config/NodeConfig.vue'),
@@ -74,6 +68,12 @@ const routes: Array<RouteRecordRaw> = [
         },
         meta: { title: 'config.appConfig' },
       },
+      {
+        path: ':node/:plugin',
+        name: 'NorthDriverGroup',
+        component: () => import('@/views/config/northDriver/Group.vue'),
+        meta: { title: 'config.groupList' },
+      }
     ],
   },
   /* CONFIG- SouthDevice */
@@ -97,6 +97,12 @@ const routes: Array<RouteRecordRaw> = [
           direction: DriverDirection.South,
         },
         meta: { title: 'config.deviceConfig' },
+      },
+      {
+        path: 'point-discovery/:node/:plugin',
+        name: 'PointDiscovery',
+        component: () => import('@/views/config/southDriver/PointDiscovery.vue'),
+        meta: { title: 'config.pointDiscovery' },
       },
       {
         path: ':node/:plugin',

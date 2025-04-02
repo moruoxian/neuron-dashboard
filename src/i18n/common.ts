@@ -403,4 +403,8 @@ export default {
     zh: '全部展开',
     en: 'Expand all',
   },
+  pleaseCheckExistingTags: {
+    zh: '请检查已存在的点位',
+    en: 'Please check existing tags',
+  },
 }

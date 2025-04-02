@@ -179,6 +179,26 @@ export default {
     zh: '模板管理',
     en: 'Template',
   },
+  common: {
+    zh: '通用',
+    en: 'Common',
+  },
+  selectExisting: {
+    zh: '选择已有',
+    en: 'Select Existing',
+  },
+  createNew: {
+    zh: '创建新的',
+    en: 'Create New',
+  },
+  cancel: {
+    zh: '取消',
+    en: 'Cancel',
+  },
+  confirm: {
+    zh: '确认',
+    en: 'Confirm',
+  },
   plugin: {
     zh: '插件',
     en: 'Plugin',
@@ -477,6 +497,62 @@ export default {
     zh: '数据统计',
     en: 'Data statistics',
   },
+  pointDiscovery: {
+    zh: '点位发现',
+    en: 'Point Discovery',
+  },
+  deviceInformation: {
+    zh: '设备信息',
+    en: 'Device Information',
+  },
+  startDiscovery: {
+    zh: '开始发现',
+    en: 'Start Discovery',
+  },
+  discoveredPoints: {
+    zh: '已发现点位',
+    en: 'Discovered Points',
+  },
+  exportPointTable: {
+    zh: '导出点表',
+    en: 'Export Points',
+  },
+  addToGroup: {
+    zh: '添加点位到采集组',
+    en: 'Add Points to Group',
+  },
+  selectOrCreateGroup: {
+    zh: '选择或创建需要添加点位的采集组',
+    en: 'Select or Create Group for Points',
+  },
+  createNewGroup: {
+    zh: '创建采集组并添加点位',
+    en: 'Create Group and Add Points',
+  },
+  noPointsDiscovered: {
+    zh: '未发现点位',
+    en: 'No Points Discovered',
+  },
+  discoveringPoints: {
+    zh: '正在发现点位...',
+    en: 'Discovering Points...',
+  },
+  clickStartDiscovery: {
+    zh: '请点击"开始发现"按钮来查找点位',
+    en: 'Please click "Start Discovery" button to find points',
+  },
+  selectedPointsCount: {
+    zh: '已选择 {count} 个点位',
+    en: '{count} Points Selected',
+  },
+  selectGroup: {
+    zh: '选择组',
+    en: 'Select Group',
+  },
+  dataType: {
+    zh: '数据类型',
+    en: 'Data Type',
+  },
   delayTime: {
     zh: '延时',
     en: 'Delay time',
@@ -496,6 +572,10 @@ export default {
   searchSouthDevicePlaceholder: {
     zh: '请输入设备名称',
     en: 'Please enter a device name',
+  },
+  searchPointPlaceholder: {
+    zh: '请输入点位名称或地址搜索',
+    en: 'Search by point name or address',
   },
   topic: {
     zh: '主题',
@@ -633,5 +713,13 @@ export default {
   arrayFormatError: {
     zh: '请输入数组',
     en: 'Please enter an array',
+  },
+  attribute: {
+    zh: '属性',
+    en: 'Attribute',
+  },
+  pleaseSelectPoints: {
+    zh: '请选择点位',
+    en: 'Please select points',
   },
 }

@@ -115,6 +115,10 @@
                       <i class="el-icon-edit-outline operation-icon" />
                       <span>{{ $t(`common.edit`) }}</span>
                     </emqx-dropdown-item>
+                    <emqx-dropdown-item v-if="isOPCUA(row.plugin)" class="operation-item-wrap" command="pointDiscovery">
+                      <i class="el-icon-search icon-smaller" />
+                      <span>{{ $t(`config.pointDiscovery`) }}</span>
+                    </emqx-dropdown-item>
                     <emqx-dropdown-item class="operation-item-wrap" command="debugLogLevel">
                       <img
                         class="operation-image img-debug-log"
@@ -212,6 +216,7 @@ import { isTheSameParentRoute } from '@/utils/utils'
 import useCheckLicense from '@/composables/useCheckLicense'
 import LicenseTipDialog from '@/components/LicenseTipDialog.vue'
 import Cookies from 'js-cookie'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   beforeRouteEnter(to, from, next) {
@@ -282,17 +287,36 @@ const getNodeValue = (node: DriverItemInList) => {
 
 const { isMonitorNode } = useDriverName()
 
+// Check if plugin is OPCUA
+const isOPCUA = (pluginName: string) => pluginName === 'OPC UA'
+
+const router = useRouter()
+
 const handleClickOperator = async (command: string, row: DriverItemInList) => {
   const apiMap = new Map([
     ['edit', editDialog],
     ['dataStatistics', isShowDataStatistics],
     ['debugLogLevel', modifyNodeLogLevel],
     ['delete', deleteDriver],
+    ['pointDiscovery', goPointDiscovery],
   ])
   const apiFunc = apiMap.get(command)
   if (apiFunc && typeof apiFunc === 'function') {
     apiFunc(row)
   }
+}
+
+// Function to navigate to point discovery page
+const goPointDiscovery = (row: DriverItemInList) => {
+  const { name, plugin } = row
+  // 目前仅实现界面，所以只导航到一个尚未创建的点位发现页面
+  router.push({
+    name: 'PointDiscovery',
+    params: {
+      node: name,
+      plugin,
+    },
+  })
 }
 
 const {
@@ -341,5 +365,10 @@ if (isShowLicenseTip !== 'false') {
   display: inline-block;
   margin: 0 10px 0 -6px;
   width: 24px;
+}
+.icon-smaller {
+  font-size: 18px;
+  color: #20466c;
+  margin-right: 2px;
 }
 </style>
