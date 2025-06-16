@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "dev:pc": "export VUE_APP_HOST=http://localhost:7003 && yarn serve",
+    "dev:pc": "export VUE_APP_HOST=http://localhost:7000 && yarn serve",
     "dev:server": "export VUE_APP_HOST=ws://iot-platform.cloud:6170 && yarn serve",
     "dev:test": "export VUE_APP_HOST=http://124.70.166.104:7000 && yarn serve",
     "dev:en": "export VUE_APP_HOST=http://124.70.166.104:7000 && export VUE_APP_LANG_EN=true && yarn serve",
@@ -60,9 +60,6 @@
     "type-fest": "1.1.0",
     "typescript": "~4.1.5",
     "vue-loader": "16.8.1"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
   },
   "lint-staged": {
     "*.{js,jsx,vue,ts,tsx}": [

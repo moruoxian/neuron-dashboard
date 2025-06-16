@@ -260,7 +260,10 @@ export const useDriverInfo = (node?: Record<string, any>) => {
     return node?.plugin || route.params?.plugin?.toString() || ''
   })
 
-  const isMQTTPugin = computed(() => nodePlugin.value && nodePlugin.value.toLocaleLowerCase() === 'mqtt')
+  const isMQTTPugin = computed(() => {
+    const pluginName = nodePlugin.value?.toLocaleLowerCase()
+    return pluginName === 'mqtt' || pluginName === 'dmp mqtt'
+  })
 
   const isGewuPugin = computed(() => {
     const nodePluginName = nodePlugin.value?.toLocaleLowerCase().replace(/\s/g, '')
